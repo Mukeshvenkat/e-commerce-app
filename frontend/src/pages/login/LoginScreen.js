@@ -1,20 +1,15 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { ApiRequestUtils } from "../../shared/api/ApirequestUtils";
+import Home from "../home/Home";
+import { ApiRequestUtils } from "../../shared/api/ApiRequestUtils";
+import { API_ROUTES } from "../../utilities/Constants";
 
 const LoginScreen = () => {
 
   const onLogin = async (userDetails) => {
         try {
-            const data = await ApiRequestUtils.post(API_ROUTES.REGISTER_CUSTOMER, userDetails);
-            
-            await Utils.addNewKeyToAsyncStorage(ASYNC_STORAGE_KEYS.USER, JSON.stringify(data?.data));
+            const data = await ApiRequestUtils.post(API_ROUTES.LOGIN, userDetails);
         } catch (err) {
             console.log('ERROR WHILE REGISTERING CUSTOMER : ', err);
-            Alert.alert('Failure', 'ERR IN REGISTER CUSTOMER', [{
-                style: 'default', onPress: () => {
-                    navigation.navigate('Welcome');
-                }
-            }]);
         }
     }
   return (
@@ -84,6 +79,7 @@ const LoginScreen = () => {
           )}
         </Formik>
       </div>
+      <Home />
     </div>
   );
 };
