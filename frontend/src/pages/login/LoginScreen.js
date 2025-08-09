@@ -1,13 +1,15 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import Home from "../home/Home";
-import { ApiRequestUtils } from "../../shared/api/ApiRequestUtils";
-import { API_ROUTES } from "../../utilities/Constants";
+import { useNavigate } from "react-router-dom";
+import { LOGIN_SCHEMA } from "../../utilities/ValidationSchemas";
 
 const LoginScreen = () => {
+  const navigate = useNavigate();
+  let initialValues = { email: "", password: "" };
 
   const onLogin = async (userDetails) => {
         try {
-            const data = await ApiRequestUtils.post(API_ROUTES.LOGIN, userDetails);
+            // const data = await ApiRequestUtils.post(API_ROUTES.LOGIN, userDetails);
+            navigate('/home');
         } catch (err) {
             console.log('ERROR WHILE REGISTERING CUSTOMER : ', err);
         }
@@ -17,25 +19,11 @@ const LoginScreen = () => {
       <div className="w-full max-w-md p-8 bg-white rounded shadow">
         <h2 className="mb-6 text-2xl font-bold text-center">Login</h2>
         <Formik
-          initialValues={{ email: "", password: "" }}
-          validate={values => {
-            const errors = {};
-            if (!values.email) {
-              errors.email = "Required";
-            } else if (
-              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-            ) {
-              errors.email = "Invalid email address";
-            }
-            if (!values.password) {
-              errors.password = "Required";
-            }
-            return errors;
-          }}
+          initialValues={initialValues}
+          validationSchema={LOGIN_SCHEMA}
           onSubmit={(values, { setSubmitting }) => {
-            // handle login logic here
-            alert(JSON.stringify(values, null, 2));
             setSubmitting(false);
+            onLogin(values);
           }}
         >
           {({ isSubmitting }) => (
@@ -47,11 +35,7 @@ const LoginScreen = () => {
                   name="email"
                   className="w-full px-3 py-2 border rounded"
                 />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-500 mt-2 text-sm"
-                />
+                <ErrorMessage name="email" component="div" className="text-red-500 mt-2 text-sm" />
               </div>
 
               <div className="mb-6">
@@ -61,11 +45,7 @@ const LoginScreen = () => {
                   name="password"
                   className="w-full px-3 py-2 border rounded"
                 />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 mt-2 text-sm"
-                />
+                <ErrorMessage name="password" component="div" className="text-red-500 mt-2 text-sm" />
               </div>
 
               <button
@@ -79,7 +59,6 @@ const LoginScreen = () => {
           )}
         </Formik>
       </div>
-      <Home />
     </div>
   );
 };

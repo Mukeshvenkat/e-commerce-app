@@ -7,9 +7,9 @@ const AppRoutes = () => (
   <Router>
     <Routes>
       <Route path="/login" element={<LoginScreen />} />
-      <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<Home />} />
-      </Route>
+      {/* <Route element={<ProtectedRoute />}> */}
+        <Route path="/home" element={<Home />} />
+      {/* </Route> */}
     </Routes>
   </Router>
 );
