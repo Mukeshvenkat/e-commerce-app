@@ -18,6 +18,15 @@ pool.on('error', (err) => {
     process.exit(-1);
 });
 
+// Test the database connection
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('PostgreSQL connection test failed:', err);
+    } else {
+        console.log('PostgreSQL connection test succeeded:', res.rows[0]);
+    }
+});
+
 module.exports = {
     query: (text, params) => pool.query(text, params),
     pool,

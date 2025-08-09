@@ -37,7 +37,55 @@ const authController = {
         } catch (error) {
             res.status(400).json({ error: 'Login failed' });
         }
-    }
+    },
+
+
+    getProfile: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const result = await db.query('SELECT id, email FROM users WHERE id = $1', [userId]);
+            const user = result.rows[0];
+            if (user) {
+                res.status(200).json(user);
+            } else {
+                res.status(404).json({ error: 'User not found' });
+            }
+        } catch (error) {
+            res.status(400).json({ error: 'Failed to fetch profile' });
+        }
+    },
+
+    updateProfile: async (req, res) => {
+        const userId = req.user.id;
+        const { email, password } = req.body;
+        try {
+            let query, params;
+            if (password) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                query = 'UPDATE users SET email = $1, password = $2 WHERE id = $3 RETURNING id, email';
+                params = [email, hashedPassword, userId];
+            } else {
+                query = 'UPDATE users SET email = $1 WHERE id = $2 RETURNING id, email';
+                params = [email, userId];
+            }
+            const result = await db.query(query, params);
+            const updatedUser = result.rows[0];
+            res.status(200).json(updatedUser);
+        } catch (error) {
+            res.status(400).json({ error: 'Failed to update profile' });
+        }
+    },
+
+    deleteProfile: async (req, res) => {
+        const userId = req.user.id;
+        try {
+            await db.query('DELETE FROM users WHERE id = $1', [userId]);
+            res.status(200).json({ message: 'User deleted successfully' });
+        } catch (error) {
+            res.status(400).json({ error: 'Failed to delete profile' });
+        }
+    },
+
 };
 
 module.exports = authController;
